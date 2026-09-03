@@ -1,272 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>8 Puzzle Problem - A* Algorithm</title>
+<title>8 Puzzle - A* Algorithm</title>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
-            color: #172554;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #172554;
+}
 
-        /* HEADER */
+/* HEADER */
 
-        header {
-            background: #1e3a8a;
-            color: white;
-            text-align: center;
-            padding: 30px 15px;
-        }
+header {
+    background: #1e3a8a;
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 36px;
-        }
+header h1 {
+    margin: 0;
+    font-size: 38px;
+}
 
-        header p {
-            margin-top: 10px;
-            font-size: 18px;
-        }
+header p {
+    font-size: 18px;
+}
 
-        /* MAIN CONTAINER */
 
-        .container {
-            width: 92%;
-            max-width: 1200px;
-            margin: 35px auto;
-        }
+/* MAIN */
 
-        h2 {
-            text-align: center;
-            color: #1e3a8a;
-            margin-bottom: 25px;
-        }
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 35px auto;
+}
 
-        /* INITIAL AND GOAL */
+h2 {
+    text-align: center;
+    color: #1e3a8a;
+    margin-bottom: 25px;
+}
 
-        .states {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 80px;
-            flex-wrap: wrap;
-        }
 
-        .state-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.15);
-            text-align: center;
-        }
+/* INITIAL AND GOAL */
 
-        .state-card h3 {
-            color: #2563eb;
-            margin-bottom: 20px;
-        }
+.states {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    flex-wrap: wrap;
+}
 
-        .big-puzzle {
-            display: grid;
-            grid-template-columns: repeat(3, 75px);
-            grid-template-rows: repeat(3, 75px);
-            gap: 4px;
-        }
+.state-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+    text-align: center;
+}
 
-        .tile {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #2563eb;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            border-radius: 7px;
-        }
+.state-card h3 {
+    color: #2563eb;
+    margin-bottom: 20px;
+}
 
-        .blank {
-            background: #e5e7eb;
-            color: #e5e7eb;
-        }
+.puzzle {
+    display: grid;
+    grid-template-columns: repeat(3, 70px);
+    grid-template-rows: repeat(3, 70px);
+    gap: 5px;
+}
 
-        .big-arrow {
-            font-size: 55px;
-            color: #16a34a;
-        }
+.tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2563eb;
+    color: white;
+    font-size: 27px;
+    font-weight: bold;
+    border-radius: 8px;
 
-        /* FORMULA */
+    transition:
+        transform 0.45s ease,
+        background 0.3s ease;
+}
 
-        .formula {
-            background: white;
-            margin: 40px auto;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.12);
-        }
+.blank {
+    background: #e5e7eb;
+    color: transparent;
+}
 
-        .formula h2 {
-            margin-bottom: 15px;
-        }
+.arrow {
+    font-size: 55px;
+    color: #16a34a;
+}
 
-        .formula-main {
-            font-size: 30px;
-            font-weight: bold;
-            color: #dc2626;
-        }
 
-        /* SOLUTION */
+/* FORMULA */
 
-        .solution {
-            margin-top: 40px;
-        }
+.formula {
+    background: white;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.12);
+}
 
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-        }
+.formula-main {
+    font-size: 30px;
+    font-weight: bold;
+    color: #dc2626;
+}
 
-        .step {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-        }
 
-        .step h3 {
-            color: #2563eb;
-            margin-top: 0;
-        }
+/* INTERACTIVE SOLVER */
 
-        .step-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
+.solver {
+    background: white;
+    margin-top: 40px;
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    text-align: center;
+}
 
-        .puzzle {
-            display: grid;
-            grid-template-columns: repeat(3, 55px);
-            grid-template-rows: repeat(3, 55px);
-            gap: 3px;
-        }
+.solver h2 {
+    margin-top: 0;
+}
 
-        .puzzle .tile {
-            font-size: 22px;
-        }
+.live-puzzle {
+    margin: 25px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 90px);
+    grid-template-rows: repeat(3, 90px);
+    gap: 6px;
+    width: max-content;
+}
 
-        .details {
-            font-size: 17px;
-            line-height: 1.8;
-        }
+.live-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-        .details strong {
-            color: #dc2626;
-        }
+    background: #2563eb;
+    color: white;
 
-        .move {
-            display: inline-block;
-            padding: 7px 15px;
-            background: #16a34a;
-            color: white;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
+    font-size: 35px;
+    font-weight: bold;
 
-        /* PATH */
+    border-radius: 10px;
 
-        .optimal {
-            margin-top: 40px;
-            background: #1e3a8a;
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-        }
+    transition:
+        transform 0.5s ease,
+        background 0.3s ease;
+}
 
-        .optimal h2 {
-            color: white;
-        }
+.live-blank {
+    background: #e5e7eb;
+}
 
-        .path {
-            font-size: 25px;
-            font-weight: bold;
-            line-height: 2;
-            letter-spacing: 2px;
-        }
 
-        .total {
-            margin-top: 15px;
-            font-size: 20px;
-        }
+/* MOVED TILE */
 
-        /* HEURISTIC */
+.moved {
+    background: #16a34a !important;
+    transform: scale(1.08);
+}
 
-        .heuristic {
-            margin-top: 30px;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
 
-        .heuristic h2 {
-            margin-top: 0;
-        }
+/* MOVE INFORMATION */
 
-        .heuristic p {
-            font-size: 18px;
-            line-height: 1.7;
-        }
+.move-info {
+    margin: 20px auto;
+    max-width: 600px;
 
-        /* FOOTER */
+    background: #eff6ff;
+    padding: 20px;
 
-        footer {
-            margin-top: 50px;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+    border-radius: 12px;
 
-        /* MOBILE */
+    font-size: 20px;
+}
 
-        @media(max-width: 800px) {
+.move-direction {
+    font-size: 30px;
+    font-weight: bold;
+    color: #16a34a;
+}
 
-            .steps {
-                grid-template-columns: 1fr;
-            }
+.current-step {
+    font-size: 18px;
+    margin-top: 10px;
+}
 
-            .states {
-                gap: 30px;
-            }
 
-            .big-arrow {
-                transform: rotate(90deg);
-            }
+/* BUTTONS */
 
-            header h1 {
-                font-size: 28px;
-            }
+button {
+    border: none;
+    padding: 12px 22px;
+    margin: 8px;
 
-        }
+    border-radius: 8px;
 
-    </style>
+    font-size: 16px;
+    font-weight: bold;
 
+    cursor: pointer;
+}
+
+.next-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.reset-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.auto-btn {
+    background: #16a34a;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+
+/* MOVE LIST */
+
+.move-list {
+    margin-top: 30px;
+}
+
+.move-list span {
+    display: inline-block;
+
+    background: #dbeafe;
+
+    padding: 8px 12px;
+
+    margin: 5px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+.move-list .done {
+    background: #16a34a;
+    color: white;
+}
+
+
+/* STEP CARDS */
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.step {
+    background: white;
+    padding: 22px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+.step h3 {
+    color: #2563eb;
+}
+
+.step-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.small-puzzle {
+    display: grid;
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
+    gap: 3px;
+}
+
+.small-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #2563eb;
+    color: white;
+
+    font-weight: bold;
+    font-size: 20px;
+
+    border-radius: 5px;
+}
+
+.small-blank {
+    background: #e5e7eb;
+}
+
+.details {
+    line-height: 1.8;
+    font-size: 17px;
+}
+
+.details strong {
+    color: #dc2626;
+}
+
+
+/* OPTIMAL PATH */
+
+.optimal {
+    margin-top: 40px;
+
+    background: #1e3a8a;
+    color: white;
+
+    padding: 30px;
+
+    border-radius: 15px;
+
+    text-align: center;
+}
+
+.optimal h2 {
+    color: white;
+}
+
+.path {
+    font-size: 23px;
+    line-height: 2;
+    font-weight: bold;
+}
+
+.total {
+    font-size: 20px;
+    margin-top: 15px;
+}
+
+
+/* FOOTER */
+
+footer {
+    margin-top: 50px;
+
+    background: #0f172a;
+    color: white;
+
+    text-align: center;
+
+    padding: 20px;
+}
+
+
+/* MOBILE */
+
+@media(max-width: 800px) {
+
+    .steps {
+        grid-template-columns: 1fr;
+    }
+
+    .states {
+        gap: 30px;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+
+}
+
+</style>
 </head>
 
 
@@ -277,11 +410,11 @@
 
 <header>
 
-    <h1>8-Puzzle Problem</h1>
+<h1>8-Puzzle Problem</h1>
 
-    <p>
-        Solving 8-Puzzle using A* Search Algorithm
-    </p>
+<p>
+Solving 8-Puzzle using A* Search Algorithm
+</p>
 
 </header>
 
@@ -289,1008 +422,746 @@
 <div class="container">
 
 
-<!-- INITIAL AND GOAL STATES -->
+<!-- INITIAL AND GOAL -->
 
 <h2>Initial State and Goal State</h2>
+
 
 <div class="states">
 
 
-    <!-- INITIAL -->
+<div class="state-card">
 
-    <div class="state-card">
+<h3>Initial State</h3>
 
-        <h3>Initial State</h3>
+<div class="puzzle">
 
-        <div class="big-puzzle">
+<div class="tile">7</div>
+<div class="tile">2</div>
+<div class="tile">4</div>
 
-            <div class="tile">7</div>
-            <div class="tile">2</div>
-            <div class="tile">4</div>
+<div class="tile">5</div>
+<div class="tile blank">-</div>
+<div class="tile">6</div>
 
-            <div class="tile">5</div>
-            <div class="tile blank">-</div>
-            <div class="tile">6</div>
+<div class="tile">8</div>
+<div class="tile">3</div>
+<div class="tile">1</div>
 
-            <div class="tile">8</div>
-            <div class="tile">3</div>
-            <div class="tile">1</div>
-
-        </div>
-
-    </div>
-
-
-    <div class="big-arrow">
-        →
-    </div>
-
-
-    <!-- GOAL -->
-
-    <div class="state-card">
-
-        <h3>Goal State</h3>
-
-        <div class="big-puzzle">
-
-            <div class="tile">1</div>
-            <div class="tile">2</div>
-            <div class="tile">3</div>
-
-            <div class="tile">4</div>
-            <div class="tile">5</div>
-            <div class="tile">6</div>
-
-            <div class="tile">7</div>
-            <div class="tile">8</div>
-            <div class="tile blank">-</div>
-
-        </div>
-
-    </div>
+</div>
 
 </div>
 
 
-<!-- A STAR FORMULA -->
+<div class="arrow">
+→
+</div>
+
+
+<div class="state-card">
+
+<h3>Goal State</h3>
+
+<div class="puzzle">
+
+<div class="tile">1</div>
+<div class="tile">2</div>
+<div class="tile">3</div>
+
+<div class="tile">4</div>
+<div class="tile">5</div>
+<div class="tile">6</div>
+
+<div class="tile">7</div>
+<div class="tile">8</div>
+<div class="tile blank">-</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- FORMULA -->
 
 <div class="formula">
 
-    <h2>A* Evaluation Function</h2>
+<h2>A* Evaluation Function</h2>
 
-    <div class="formula-main">
-        f(n) = g(n) + h(n)
-    </div>
-
-    <p>
-        <b>g(n)</b> = Cost from Initial State
-        <br>
-
-        <b>h(n)</b> = Manhattan Distance to Goal
-        <br>
-
-        <b>f(n)</b> = Total Estimated Cost
-    </p>
-
-</div>
-
-
-<!-- SOLUTION STEPS -->
-
-<div class="solution">
-
-<h2>Step-by-Step A* Solution</h2>
-
-
-<div class="steps">
-
-
-<!-- STEP 1 -->
-
-<div class="step">
-
-<span class="move">START</span>
-
-<h3>Step 1 – Initial State</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">5</div>
-<div class="tile blank">-</div>
-<div class="tile">6</div>
-
-<div class="tile">8</div>
-<div class="tile">3</div>
-<div class="tile">1</div>
-
-</div>
-
-<div class="details">
-
-g = 0<br>
-h = 14<br>
-
-<strong>f = 0 + 14 = 14</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 2 -->
-
-<div class="step">
-
-<span class="move">D</span>
-
-<h3>Step 2 – Move Blank Down</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">5</div>
-<div class="tile">3</div>
-<div class="tile">6</div>
-
-<div class="tile">8</div>
-<div class="tile blank">-</div>
-<div class="tile">1</div>
-
-</div>
-
-<div class="details">
-
-g = 1<br>
-h = 13<br>
-
-<strong>f = 1 + 13 = 14</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 3 -->
-
-<div class="step">
-
-<span class="move">R</span>
-
-<h3>Step 3 – Move Blank Right</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">5</div>
-<div class="tile">3</div>
-<div class="tile">6</div>
-
-<div class="tile">8</div>
-<div class="tile">1</div>
-<div class="tile blank">-</div>
-
-</div>
-
-<div class="details">
-
-g = 2<br>
-h = 12<br>
-
-<strong>f = 2 + 12 = 14</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 4 -->
-
-<div class="step">
-
-<span class="move">U</span>
-
-<h3>Step 4 – Move Blank Up</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">5</div>
-<div class="tile">3</div>
-<div class="tile blank">-</div>
-
-<div class="tile">8</div>
-<div class="tile">1</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 3<br>
-h = 13<br>
-
-<strong>f = 3 + 13 = 16</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 5 -->
-
-<div class="step">
-
-<span class="move">L</span>
-
-<h3>Step 5 – Move Blank Left</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">5</div>
-<div class="tile blank">-</div>
-<div class="tile">3</div>
-
-<div class="tile">8</div>
-<div class="tile">1</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 4<br>
-h = 12<br>
-
-<strong>f = 4 + 12 = 16</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 6 -->
-
-<div class="step">
-
-<span class="move">L</span>
-
-<h3>Step 6 – Move Blank Left</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile blank">-</div>
-<div class="tile">5</div>
-<div class="tile">3</div>
-
-<div class="tile">8</div>
-<div class="tile">1</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 5<br>
-h = 11<br>
-
-<strong>f = 5 + 11 = 16</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 7 -->
-
-<div class="step">
-
-<span class="move">U</span>
-
-<h3>Step 7 – Move Blank Up</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">8</div>
-<div class="tile">5</div>
-<div class="tile">3</div>
-
-<div class="tile blank">-</div>
-<div class="tile">1</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 6<br>
-h = 10<br>
-
-<strong>f = 6 + 10 = 16</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 8 -->
-
-<div class="step">
-
-<span class="move">R</span>
-
-<h3>Step 8 – Move Blank Right</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">8</div>
-<div class="tile blank">-</div>
-<div class="tile">3</div>
-
-<div class="tile">1</div>
-<div class="tile">5</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 7<br>
-h = 11<br>
-
-<strong>f = 7 + 11 = 18</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 9 -->
-
-<div class="step">
-
-<span class="move">R</span>
-
-<h3>Step 9 – Move Blank Right</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">8</div>
-<div class="tile">3</div>
-<div class="tile blank">-</div>
-
-<div class="tile">1</div>
-<div class="tile">5</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 8<br>
-h = 10<br>
-
-<strong>f = 8 + 10 = 18</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 10 -->
-
-<div class="step">
-
-<span class="move">D</span>
-
-<h3>Step 10 – Move Blank Down</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">8</div>
-<div class="tile">3</div>
-<div class="tile">6</div>
-
-<div class="tile">1</div>
-<div class="tile">5</div>
-<div class="tile blank">-</div>
-
-</div>
-
-<div class="details">
-
-g = 9<br>
-h = 9<br>
-
-<strong>f = 9 + 9 = 18</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 11 -->
-
-<div class="step">
-
-<span class="move">L</span>
-
-<h3>Step 11 – Move Blank Left</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">8</div>
-<div class="tile">3</div>
-<div class="tile">6</div>
-
-<div class="tile">1</div>
-<div class="tile blank">-</div>
-<div class="tile">5</div>
-
-</div>
-
-<div class="details">
-
-g = 10<br>
-h = 10<br>
-
-<strong>f = 10 + 10 = 20</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 12 -->
-
-<div class="step">
-
-<span class="move">D</span>
-
-<h3>Step 12 – Move Blank Down</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
-
-<div class="tile">8</div>
-<div class="tile">3</div>
-<div class="tile">6</div>
-
-<div class="tile">1</div>
-<div class="tile blank">-</div>
-<div class="tile">5</div>
-
-</div>
-
-<div class="details">
-
-g = 11<br>
-h = 9<br>
-
-<strong>f = 11 + 9 = 20</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 13 -->
-
-<div class="step">
-
-<span class="move">L</span>
-
-<h3>Step 13 – Continue Search</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">2</div>
-<div class="tile">4</div>
-<div class="tile">3</div>
-
-<div class="tile">7</div>
-<div class="tile">1</div>
-<div class="tile">5</div>
-
-<div class="tile">8</div>
-<div class="tile blank">-</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 12<br>
-h = 8<br>
-
-<strong>f = 12 + 8 = 20</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 14 -->
-
-<div class="step">
-
-<span class="move">U</span>
-
-<h3>Step 14 – Move Blank Up</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">2</div>
-<div class="tile">4</div>
-<div class="tile">3</div>
-
-<div class="tile">7</div>
-<div class="tile blank">-</div>
-<div class="tile">5</div>
-
-<div class="tile">8</div>
-<div class="tile">1</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 13<br>
-h = 7<br>
-
-<strong>f = 13 + 7 = 20</strong>
-
-</div>
-
-</div>
-
+<div class="formula-main">
+f(n) = g(n) + h(n)
 </div>
 
+<p>
 
-<!-- STEP 15 -->
+<b>g(n)</b> = Cost from Initial State
 
-<div class="step">
+<br>
 
-<span class="move">R</span>
+<b>h(n)</b> = Manhattan Distance
 
-<h3>Step 15 – Move Blank Right</h3>
+<br>
 
-<div class="step-content">
+<b>f(n)</b> = g(n) + h(n)
 
-<div class="puzzle">
+</p>
 
-<div class="tile">2</div>
-<div class="tile">4</div>
-<div class="tile">3</div>
-
-<div class="tile">7</div>
-<div class="tile">1</div>
-<div class="tile">5</div>
-
-<div class="tile">8</div>
-<div class="tile blank">-</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 14<br>
-h = 6<br>
-
-<strong>f = 14 + 6 = 20</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 16 -->
-
-<div class="step">
-
-<span class="move">U</span>
-
-<h3>Step 16 – Move Blank Up</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">2</div>
-<div class="tile blank">-</div>
-<div class="tile">3</div>
-
-<div class="tile">1</div>
-<div class="tile">4</div>
-<div class="tile">5</div>
-
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 15<br>
-h = 5<br>
-
-<strong>f = 15 + 5 = 20</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 17 -->
-
-<div class="step">
-
-<span class="move">L</span>
-
-<h3>Step 17 – Move Blank Left</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile blank">-</div>
-<div class="tile">2</div>
-<div class="tile">3</div>
-
-<div class="tile">1</div>
-<div class="tile">4</div>
-<div class="tile">5</div>
-
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile">6</div>
-
-</div>
-
-<div class="details">
-
-g = 16<br>
-h = 4<br>
-
-<strong>f = 16 + 4 = 20</strong>
-
-</div>
-
-</div>
-
 </div>
-
-
-<!-- STEP 18 -->
-
-<div class="step">
 
-<span class="move">D</span>
 
-<h3>Step 18 – Move Blank Down</h3>
 
-<div class="step-content">
+<!-- INTERACTIVE TILE MOVEMENT -->
 
-<div class="puzzle">
+<div class="solver">
 
-<div class="tile">1</div>
-<div class="tile">2</div>
-<div class="tile">3</div>
+<h2>Interactive Tile Movement</h2>
 
-<div class="tile blank">-</div>
-<div class="tile">4</div>
-<div class="tile">5</div>
+<p>
+Click <b>Next Move</b> to see how the tiles move toward the goal.
+</p>
 
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile">6</div>
 
-</div>
-
-<div class="details">
-
-g = 17<br>
-h = 3<br>
+<div id="livePuzzle" class="live-puzzle"></div>
 
-<strong>f = 17 + 3 = 20</strong>
 
-</div>
-
-</div>
+<div class="move-info">
 
+<div>
+Current Move:
 </div>
 
-
-<!-- STEP 19 -->
-
-<div class="step">
-
-<span class="move">R</span>
-
-<h3>Step 19 – Move Blank Right</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">1</div>
-<div class="tile">2</div>
-<div class="tile">3</div>
-
-<div class="tile">4</div>
-<div class="tile blank">-</div>
-<div class="tile">5</div>
-
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile">6</div>
-
+<div id="direction" class="move-direction">
+START
 </div>
-
-<div class="details">
-
-g = 18<br>
-h = 2<br>
-
-<strong>f = 18 + 2 = 20</strong>
 
+<div id="movedTile">
+Initial State
 </div>
 
+<div id="stepNumber" class="current-step">
+Step 0 of 20
 </div>
 
 </div>
 
 
-<!-- STEP 20 -->
+<button class="next-btn" onclick="nextMove()">
+Next Move
+</button>
 
-<div class="step">
 
-<span class="move">R</span>
+<button class="auto-btn" onclick="autoSolve()">
+Auto Solve
+</button>
 
-<h3>Step 20 – Move Blank Right</h3>
 
-<div class="step-content">
+<button class="reset-btn" onclick="resetPuzzle()">
+Reset
+</button>
 
-<div class="puzzle">
 
-<div class="tile">1</div>
-<div class="tile">2</div>
-<div class="tile">3</div>
+<div class="move-list">
 
-<div class="tile">4</div>
-<div class="tile">5</div>
-<div class="tile blank">-</div>
+<h3>Move Sequence</h3>
 
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile">6</div>
+<div id="moveList"></div>
 
 </div>
 
-<div class="details">
-
-g = 19<br>
-h = 1<br>
-
-<strong>f = 19 + 1 = 20</strong>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- STEP 21 -->
-
-<div class="step">
-
-<span class="move">D → GOAL</span>
-
-<h3>Step 21 – Goal State</h3>
-
-<div class="step-content">
-
-<div class="puzzle">
-
-<div class="tile">1</div>
-<div class="tile">2</div>
-<div class="tile">3</div>
-
-<div class="tile">4</div>
-<div class="tile">5</div>
-<div class="tile">6</div>
-
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile blank">-</div>
-
 </div>
 
-<div class="details">
 
-g = 20<br>
-h = 0<br>
 
-<strong>f = 20 + 0 = 20</strong>
+<!-- STEP-BY-STEP EXPLANATION -->
 
-</div>
-
-</div>
+<h2 style="margin-top:50px;">
+A* Step-by-Step Solution
+</h2>
 
-</div>
-
 
-</div>
+<div id="steps" class="steps"></div>
 
-</div>
 
 
 <!-- OPTIMAL PATH -->
 
 <div class="optimal">
 
-    <h2>A* Optimal Path</h2>
+<h2>A* Optimal Path</h2>
 
-    <div class="path">
+<div class="path">
 
-        D → R → U → L → L → U → R → R → D → L
+D → R → U → L → L → U → R → R → D → L
 
-        <br>
+<br>
 
-        D → L → U → R → U → L → D → R → R → D
-
-    </div>
-
-    <div class="total">
-
-        Total Number of Moves = <b>20</b>
-
-    </div>
+D → L → U → R → U → L → D → R → R → D
 
 </div>
+
+<div class="total">
+
+Total Number of Moves = <b>20</b>
+
+</div>
+
+</div>
+
 
 
 <!-- HEURISTIC -->
 
-<div class="heuristic">
+<div class="formula">
 
-    <h2>Heuristic Used</h2>
+<h2>Heuristic Used</h2>
 
-    <p>
-        <b>Manhattan Distance:</b>
-        The heuristic calculates the total number of horizontal
-        and vertical moves required to place every tile in its
-        correct position.
-    </p>
+<p>
 
-    <p>
-        <b>A* Formula:</b>
-        f(n) = g(n) + h(n)
-    </p>
+<b>Manhattan Distance</b>
 
-</div>
+</p>
 
+<p>
+
+For every tile, calculate the number of horizontal
+and vertical moves required to reach its goal position.
+
+</p>
 
 </div>
 
 
-<!-- FOOTER -->
+</div>
+
 
 <footer>
 
-    <p>
-        Artificial Intelligence | 8-Puzzle Problem | A* Search Algorithm
-    </p>
+Artificial Intelligence | 8-Puzzle Problem | A* Search Algorithm
 
 </footer>
 
 
-</body>
 
+<script>
+
+
+/* INITIAL PUZZLE */
+
+let puzzle = [
+    7, 2, 4,
+    5, 0, 6,
+    8, 3, 1
+];
+
+
+/* GOAL */
+
+const goal = [
+    1, 2, 3,
+    4, 5, 6,
+    7, 8, 0
+];
+
+
+/* A* OPTIMAL MOVES */
+
+const moves = [
+    "D", "R", "U", "L", "L",
+    "U", "R", "R", "D", "L",
+    "D", "L", "U", "R", "U",
+    "L", "D", "R", "R", "D"
+];
+
+
+let currentMove = 0;
+
+
+/* DISPLAY PUZZLE */
+
+function displayPuzzle() {
+
+    const board = document.getElementById("livePuzzle");
+
+    board.innerHTML = "";
+
+
+    puzzle.forEach((value, index) => {
+
+        const tile = document.createElement("div");
+
+        tile.className = "live-tile";
+
+
+        if (value === 0) {
+
+            tile.classList.add("live-blank");
+
+            tile.innerHTML = "-";
+
+        } else {
+
+            tile.innerHTML = value;
+
+        }
+
+
+        board.appendChild(tile);
+
+    });
+
+}
+
+
+/* MOVE BLANK */
+
+function makeMove(direction) {
+
+    const blankIndex = puzzle.indexOf(0);
+
+    const row = Math.floor(blankIndex / 3);
+
+    const col = blankIndex % 3;
+
+
+    let newRow = row;
+
+    let newCol = col;
+
+
+    if (direction === "U") {
+        newRow--;
+    }
+
+    if (direction === "D") {
+        newRow++;
+    }
+
+    if (direction === "L") {
+        newCol--;
+    }
+
+    if (direction === "R") {
+        newCol++;
+    }
+
+
+    if (
+        newRow < 0 ||
+        newRow > 2 ||
+        newCol < 0 ||
+        newCol > 2
+    ) {
+
+        return null;
+
+    }
+
+
+    const newIndex = newRow * 3 + newCol;
+
+    const movedTile = puzzle[newIndex];
+
+
+    puzzle[blankIndex] = movedTile;
+
+    puzzle[newIndex] = 0;
+
+
+    return movedTile;
+
+}
+
+
+/* NEXT MOVE */
+
+function nextMove() {
+
+    if (currentMove >= moves.length) {
+
+        document.getElementById("direction").innerHTML = "GOAL";
+
+        document.getElementById("movedTile").innerHTML =
+            "Goal State Reached!";
+
+        return;
+
+    }
+
+
+    const direction = moves[currentMove];
+
+
+    const movedTile = makeMove(direction);
+
+
+    currentMove++;
+
+
+    displayPuzzle();
+
+
+    document.getElementById("direction").innerHTML =
+        direction;
+
+
+    document.getElementById("movedTile").innerHTML =
+        "Tile <b>" + movedTile +
+        "</b> moves " +
+        getDirectionText(direction) +
+        " into the blank space.";
+
+
+    document.getElementById("stepNumber").innerHTML =
+        "Step " + currentMove +
+        " of " + moves.length;
+
+
+    updateMoveList();
+
+
+    if (currentMove === moves.length) {
+
+        document.getElementById("direction").innerHTML =
+            "GOAL ✓";
+
+        document.getElementById("movedTile").innerHTML =
+            "Goal State Reached Successfully!";
+
+    }
+
+}
+
+
+/* DIRECTION TEXT */
+
+function getDirectionText(direction) {
+
+    if (direction === "U") {
+        return "UP ↑";
+    }
+
+    if (direction === "D") {
+        return "DOWN ↓";
+    }
+
+    if (direction === "L") {
+        return "LEFT ←";
+    }
+
+    if (direction === "R") {
+        return "RIGHT →";
+    }
+
+}
+
+
+/* MOVE LIST */
+
+function updateMoveList() {
+
+    const list = document.getElementById("moveList");
+
+    list.innerHTML = "";
+
+
+    moves.forEach((move, index) => {
+
+        const span = document.createElement("span");
+
+        span.innerHTML =
+            (index + 1) + ". " + move;
+
+
+        if (index < currentMove) {
+
+            span.classList.add("done");
+
+        }
+
+
+        list.appendChild(span);
+
+    });
+
+}
+
+
+/* RESET */
+
+function resetPuzzle() {
+
+    puzzle = [
+        7, 2, 4,
+        5, 0, 6,
+        8, 3, 1
+    ];
+
+    currentMove = 0;
+
+
+    displayPuzzle();
+
+
+    document.getElementById("direction").innerHTML =
+        "START";
+
+
+    document.getElementById("movedTile").innerHTML =
+        "Initial State";
+
+
+    document.getElementById("stepNumber").innerHTML =
+        "Step 0 of 20";
+
+
+    updateMoveList();
+
+}
+
+
+/* AUTO SOLVE */
+
+let timer = null;
+
+function autoSolve() {
+
+    if (currentMove >= moves.length) {
+
+        resetPuzzle();
+
+    }
+
+
+    clearInterval(timer);
+
+
+    timer = setInterval(function() {
+
+        if (currentMove >= moves.length) {
+
+            clearInterval(timer);
+
+            return;
+
+        }
+
+
+        nextMove();
+
+    }, 700);
+
+}
+
+
+/* CREATE STEP TABLE */
+
+function calculateManhattan(state) {
+
+    let distance = 0;
+
+
+    for (let i = 0; i < 9; i++) {
+
+        let value = state[i];
+
+
+        if (value === 0) {
+            continue;
+        }
+
+
+        let currentRow =
+            Math.floor(i / 3);
+
+        let currentCol =
+            i % 3;
+
+
+        let goalIndex =
+            goal.indexOf(value);
+
+
+        let goalRow =
+            Math.floor(goalIndex / 3);
+
+        let goalCol =
+            goalIndex % 3;
+
+
+        distance +=
+            Math.abs(currentRow - goalRow) +
+            Math.abs(currentCol - goalCol);
+
+    }
+
+
+    return distance;
+
+}
+
+
+/* GENERATE STATES */
+
+function generateSteps() {
+
+    let state = [
+        7, 2, 4,
+        5, 0, 6,
+        8, 3, 1
+    ];
+
+
+    const stepsContainer =
+        document.getElementById("steps");
+
+
+    stepsContainer.innerHTML = "";
+
+
+    moves.forEach(function(move, index) {
+
+        makeMoveForState(state, move);
+
+
+        let g = index + 1;
+
+        let h = calculateManhattan(state);
+
+        let f = g + h;
+
+
+        const card =
+            document.createElement("div");
+
+        card.className = "step";
+
+
+        let puzzleHTML =
+            '<div class="small-puzzle">';
+
+
+        state.forEach(function(value) {
+
+            if (value === 0) {
+
+                puzzleHTML +=
+                    '<div class="small-tile small-blank">-</div>';
+
+            } else {
+
+                puzzleHTML +=
+                    '<div class="small-tile">' +
+                    value +
+                    '</div>';
+
+            }
+
+        });
+
+
+        puzzleHTML += "</div>";
+
+
+        card.innerHTML = `
+
+            <h3>
+                Step ${g} – Move ${move}
+            </h3>
+
+            <div class="step-grid">
+
+                ${puzzleHTML}
+
+                <div class="details">
+
+                    g = ${g}<br>
+
+                    h = ${h}<br>
+
+                    <strong>
+                    f = ${g} + ${h} = ${f}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        stepsContainer.appendChild(card);
+
+    });
+
+}
+
+
+/* MOVE STATE FOR STEP TABLE */
+
+function makeMoveForState(state, direction) {
+
+    const blankIndex =
+        state.indexOf(0);
+
+
+    const row =
+        Math.floor(blankIndex / 3);
+
+    const col =
+        blankIndex % 3;
+
+
+    let newRow = row;
+
+    let newCol = col;
+
+
+    if (direction === "U") {
+        newRow--;
+    }
+
+    if (direction === "D") {
+        newRow++;
+    }
+
+    if (direction === "L") {
+        newCol--;
+    }
+
+    if (direction === "R") {
+        newCol++;
+    }
+
+
+    const newIndex =
+        newRow * 3 + newCol;
+
+
+    const temp =
+        state[blankIndex];
+
+
+    state[blankIndex] =
+        state[newIndex];
+
+    state[newIndex] =
+        temp;
+
+}
+
+
+/* START PAGE */
+
+displayPuzzle();
+
+updateMoveList();
+
+generateSteps();
+
+
+</script>
+
+
+</body>
 </html>
