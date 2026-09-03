@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>8 Puzzle Problem</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            text-align: center;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #1e3a8a;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .state {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px gray;
+        }
+
+        .state h2 {
+            color: #2563eb;
+        }
+
+        .puzzle {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            border: 3px solid #333;
+        }
+
+        .box {
+            border: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: bold;
+            background-color: #e0f2fe;
+        }
+
+        .blank {
+            background-color: white;
+        }
+
+        .solution {
+            margin-top: 50px;
+            background: white;
+            padding: 25px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px gray;
+        }
+
+        .moves {
+            font-size: 28px;
+            font-weight: bold;
+            color: green;
+            margin: 20px;
+        }
+
+        .step {
+            background-color: #dbeafe;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>8-Puzzle Problem</h1>
+
+    <div class="container">
+
+        <!-- Initial State -->
+        <div class="state">
+
+            <h2>Initial State</h2>
+
+            <div class="puzzle">
+
+                <div class="box">1</div>
+                <div class="box">2</div>
+                <div class="box">3</div>
+
+                <div class="box">4</div>
+                <div class="box">8</div>
+                <div class="box blank">-</div>
+
+                <div class="box">7</div>
+                <div class="box">6</div>
+                <div class="box">5</div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Goal State -->
+        <div class="state">
+
+            <h2>Goal State</h2>
+
+            <div class="puzzle">
+
+                <div class="box">1</div>
+                <div class="box">2</div>
+                <div class="box">3</div>
+
+                <div class="box">4</div>
+                <div class="box">5</div>
+                <div class="box">6</div>
+
+                <div class="box">7</div>
+                <div class="box">8</div>
+                <div class="box blank">-</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Solution -->
+
+    <div class="solution">
+
+        <h2>Solution Using A* Algorithm</h2>
+
+        <div class="step">
+            Step 1: Initial State
+            <br>
+            1 2 3
+            <br>
+            4 8 -
+            <br>
+            7 6 5
+        </div>
+
+        <div class="step">
+            Step 2: Move Blank Down (D)
+            <br>
+            1 2 3
+            <br>
+            4 8 5
+            <br>
+            7 6 -
+        </div>
+
+        <div class="step">
+            Step 3: Move Blank Left (L)
+            <br>
+            1 2 3
+            <br>
+            4 8 5
+            <br>
+            7 - 6
+        </div>
+
+        <div class="step">
+            Step 4: Move Blank Up (U)
+            <br>
+            1 2 3
+            <br>
+            4 - 5
+            <br>
+            7 8 6
+        </div>
+
+        <div class="step">
+            Step 5: Move Blank Right (R)
+            <br>
+            1 2 3
+            <br>
+            4 5 -
+            <br>
+            7 8 6
+        </div>
+
+        <div class="step">
+            Step 6: Move Blank Down (D) → Goal State
+            <br>
+            1 2 3
+            <br>
+            4 5 6
+            <br>
+            7 8 -
+        </div>
+
+        <h2>Optimal Path</h2>
+
+        <div class="moves">
+            D → L → U → R → D
+        </div>
+
+        <h3>Total Number of Moves = 5</h3>
+
+        <p>
+            <b>A* Formula:</b> f(n) = g(n) + h(n)
+        </p>
+
+    </div>
+
+</body>
+</html>
