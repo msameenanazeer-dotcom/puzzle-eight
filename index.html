@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +19,7 @@ body {
     background: #f4f7fb;
     color: #172554;
 }
+
 
 /* HEADER */
 
@@ -38,7 +40,7 @@ header p {
 }
 
 
-/* MAIN */
+/* CONTAINER */
 
 .container {
     width: 92%;
@@ -49,7 +51,6 @@ header p {
 h2 {
     text-align: center;
     color: #1e3a8a;
-    margin-bottom: 25px;
 }
 
 
@@ -73,37 +74,34 @@ h2 {
 
 .state-card h3 {
     color: #2563eb;
-    margin-bottom: 20px;
 }
 
-.puzzle {
+.static-puzzle {
     display: grid;
-    grid-template-columns: repeat(3, 70px);
-    grid-template-rows: repeat(3, 70px);
+    grid-template-columns: repeat(3,70px);
+    grid-template-rows: repeat(3,70px);
     gap: 5px;
 }
 
-.tile {
+.static-tile {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
     background: #2563eb;
     color: white;
-    font-size: 27px;
+
+    font-size: 28px;
     font-weight: bold;
+
     border-radius: 8px;
-
-    transition:
-        transform 0.45s ease,
-        background 0.3s ease;
 }
 
-.blank {
+.static-blank {
     background: #e5e7eb;
-    color: transparent;
 }
 
-.arrow {
+.big-arrow {
     font-size: 55px;
     color: #16a34a;
 }
@@ -112,11 +110,12 @@ h2 {
 /* FORMULA */
 
 .formula {
-    background: white;
     margin: 40px auto;
+    background: white;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
+
     box-shadow: 0 5px 18px rgba(0,0,0,0.12);
 }
 
@@ -127,134 +126,209 @@ h2 {
 }
 
 
-/* INTERACTIVE SOLVER */
+/* ANIMATED SOLVER */
 
 .solver {
-    background: white;
     margin-top: 40px;
+
+    background: white;
+
     padding: 35px;
+
     border-radius: 18px;
+
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+
     text-align: center;
 }
 
-.solver h2 {
-    margin-top: 0;
+
+/*
+    IMPORTANT:
+    The board uses position:absolute.
+    This allows each tile to physically
+    slide from one cell to another.
+*/
+
+.board {
+    position: relative;
+
+    width: 306px;
+    height: 306px;
+
+    margin: 30px auto;
+
+    background: #cbd5e1;
+
+    border: 5px solid #1e3a8a;
+
+    border-radius: 12px;
 }
 
-.live-puzzle {
-    margin: 25px auto;
-    display: grid;
-    grid-template-columns: repeat(3, 90px);
-    grid-template-rows: repeat(3, 90px);
-    gap: 6px;
-    width: max-content;
-}
 
-.live-tile {
+/* INDIVIDUAL MOVING TILE */
+
+.moving-tile {
+
+    position: absolute;
+
+    width: 96px;
+    height: 96px;
+
     display: flex;
+
     justify-content: center;
     align-items: center;
 
     background: #2563eb;
+
     color: white;
 
-    font-size: 35px;
+    font-size: 36px;
+
     font-weight: bold;
 
     border-radius: 10px;
 
     transition:
-        transform 0.5s ease,
+        left 0.55s ease,
+        top 0.55s ease,
+        transform 0.55s ease,
         background 0.3s ease;
+
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+    z-index: 2;
 }
 
-.live-blank {
+
+/* BLANK */
+
+.moving-blank {
+
     background: #e5e7eb;
+
+    box-shadow: none;
+
+    z-index: 1;
 }
 
 
-/* MOVED TILE */
+/* HIGHLIGHT MOVING TILE */
 
-.moved {
+.highlight {
+
     background: #16a34a !important;
+
     transform: scale(1.08);
+
+    z-index: 5;
 }
 
 
 /* MOVE INFORMATION */
 
 .move-info {
+
+    max-width: 650px;
+
     margin: 20px auto;
-    max-width: 600px;
+
+    padding: 20px;
 
     background: #eff6ff;
-    padding: 20px;
 
     border-radius: 12px;
 
     font-size: 20px;
 }
 
-.move-direction {
-    font-size: 30px;
+.direction {
+
+    font-size: 35px;
+
     font-weight: bold;
+
     color: #16a34a;
+
+    margin: 8px;
 }
 
-.current-step {
-    font-size: 18px;
+.tile-message {
+
+    font-size: 20px;
+
     margin-top: 10px;
+}
+
+.step-count {
+
+    margin-top: 10px;
+
+    font-weight: bold;
 }
 
 
 /* BUTTONS */
 
 button {
+
     border: none;
-    padding: 12px 22px;
+
+    padding: 13px 24px;
+
     margin: 8px;
 
     border-radius: 8px;
 
     font-size: 16px;
+
     font-weight: bold;
 
     cursor: pointer;
 }
 
 .next-btn {
-    background: #2563eb;
-    color: white;
-}
 
-.reset-btn {
-    background: #dc2626;
+    background: #2563eb;
+
     color: white;
 }
 
 .auto-btn {
+
     background: #16a34a;
+
+    color: white;
+}
+
+.reset-btn {
+
+    background: #dc2626;
+
     color: white;
 }
 
 button:hover {
+
     opacity: 0.85;
 }
 
 
-/* MOVE LIST */
+/* MOVE SEQUENCE */
 
-.move-list {
+.move-sequence {
+
     margin-top: 30px;
 }
 
-.move-list span {
+.move-box {
+
     display: inline-block;
 
     background: #dbeafe;
 
-    padding: 8px 12px;
+    padding: 9px 13px;
 
     margin: 5px;
 
@@ -263,81 +337,59 @@ button:hover {
     font-weight: bold;
 }
 
-.move-list .done {
+.move-box.completed {
+
     background: #16a34a;
+
     color: white;
 }
 
+.move-box.current {
 
-/* STEP CARDS */
+    background: #f59e0b;
 
-.steps {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-    margin-top: 30px;
+    color: white;
+
+    transform: scale(1.1);
 }
 
-.step {
+
+/* EXPLANATION */
+
+.explanation {
+
+    margin-top: 45px;
+
     background: white;
-    padding: 22px;
+
+    padding: 30px;
+
     border-radius: 15px;
+
     box-shadow: 0 5px 15px rgba(0,0,0,0.12);
 }
 
-.step h3 {
-    color: #2563eb;
+.explanation h2 {
+
+    margin-top: 0;
 }
 
-.step-grid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
-    flex-wrap: wrap;
-}
+.explanation p {
 
-.small-puzzle {
-    display: grid;
-    grid-template-columns: repeat(3, 50px);
-    grid-template-rows: repeat(3, 50px);
-    gap: 3px;
-}
+    font-size: 18px;
 
-.small-tile {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: #2563eb;
-    color: white;
-
-    font-weight: bold;
-    font-size: 20px;
-
-    border-radius: 5px;
-}
-
-.small-blank {
-    background: #e5e7eb;
-}
-
-.details {
-    line-height: 1.8;
-    font-size: 17px;
-}
-
-.details strong {
-    color: #dc2626;
+    line-height: 1.7;
 }
 
 
 /* OPTIMAL PATH */
 
 .optimal {
+
     margin-top: 40px;
 
     background: #1e3a8a;
+
     color: white;
 
     padding: 30px;
@@ -348,17 +400,23 @@ button:hover {
 }
 
 .optimal h2 {
+
     color: white;
 }
 
 .path {
-    font-size: 23px;
+
+    font-size: 24px;
+
     line-height: 2;
+
     font-weight: bold;
 }
 
 .total {
+
     font-size: 20px;
+
     margin-top: 15px;
 }
 
@@ -366,9 +424,11 @@ button:hover {
 /* FOOTER */
 
 footer {
+
     margin-top: 50px;
 
     background: #0f172a;
+
     color: white;
 
     text-align: center;
@@ -379,27 +439,33 @@ footer {
 
 /* MOBILE */
 
-@media(max-width: 800px) {
+@media(max-width:600px) {
 
-    .steps {
-        grid-template-columns: 1fr;
+    .board {
+
+        width: 246px;
+
+        height: 246px;
     }
 
-    .states {
-        gap: 30px;
-    }
+    .moving-tile {
 
-    .arrow {
-        transform: rotate(90deg);
-    }
+        width: 76px;
 
-    header h1 {
+        height: 76px;
+
         font-size: 28px;
+    }
+
+    .path {
+
+        font-size: 18px;
     }
 
 }
 
 </style>
+
 </head>
 
 
@@ -413,7 +479,7 @@ footer {
 <h1>8-Puzzle Problem</h1>
 
 <p>
-Solving 8-Puzzle using A* Search Algorithm
+A* Search Algorithm with Visual Tile Movement
 </p>
 
 </header>
@@ -424,7 +490,7 @@ Solving 8-Puzzle using A* Search Algorithm
 
 <!-- INITIAL AND GOAL -->
 
-<h2>Initial State and Goal State</h2>
+<h2>Initial State → Goal State</h2>
 
 
 <div class="states">
@@ -434,26 +500,26 @@ Solving 8-Puzzle using A* Search Algorithm
 
 <h3>Initial State</h3>
 
-<div class="puzzle">
+<div class="static-puzzle">
 
-<div class="tile">7</div>
-<div class="tile">2</div>
-<div class="tile">4</div>
+<div class="static-tile">7</div>
+<div class="static-tile">2</div>
+<div class="static-tile">4</div>
 
-<div class="tile">5</div>
-<div class="tile blank">-</div>
-<div class="tile">6</div>
+<div class="static-tile">5</div>
+<div class="static-tile static-blank">-</div>
+<div class="static-tile">6</div>
 
-<div class="tile">8</div>
-<div class="tile">3</div>
-<div class="tile">1</div>
-
-</div>
+<div class="static-tile">8</div>
+<div class="static-tile">3</div>
+<div class="static-tile">1</div>
 
 </div>
 
+</div>
 
-<div class="arrow">
+
+<div class="big-arrow">
 →
 </div>
 
@@ -462,35 +528,37 @@ Solving 8-Puzzle using A* Search Algorithm
 
 <h3>Goal State</h3>
 
-<div class="puzzle">
+<div class="static-puzzle">
 
-<div class="tile">1</div>
-<div class="tile">2</div>
-<div class="tile">3</div>
+<div class="static-tile">1</div>
+<div class="static-tile">2</div>
+<div class="static-tile">3</div>
 
-<div class="tile">4</div>
-<div class="tile">5</div>
-<div class="tile">6</div>
+<div class="static-tile">4</div>
+<div class="static-tile">5</div>
+<div class="static-tile">6</div>
 
-<div class="tile">7</div>
-<div class="tile">8</div>
-<div class="tile blank">-</div>
-
-</div>
+<div class="static-tile">7</div>
+<div class="static-tile">8</div>
+<div class="static-tile static-blank">-</div>
 
 </div>
 
 </div>
 
+</div>
 
-<!-- FORMULA -->
+
+<!-- A* FORMULA -->
 
 <div class="formula">
 
 <h2>A* Evaluation Function</h2>
 
 <div class="formula-main">
+
 f(n) = g(n) + h(n)
+
 </div>
 
 <p>
@@ -503,7 +571,7 @@ f(n) = g(n) + h(n)
 
 <br>
 
-<b>f(n)</b> = g(n) + h(n)
+<b>f(n)</b> = Total Estimated Cost
 
 </p>
 
@@ -511,57 +579,89 @@ f(n) = g(n) + h(n)
 
 
 
-<!-- INTERACTIVE TILE MOVEMENT -->
+<!-- VISUAL TILE MOVEMENT -->
 
 <div class="solver">
 
-<h2>Interactive Tile Movement</h2>
+<h2>Visual Tile Movement</h2>
 
 <p>
-Click <b>Next Move</b> to see how the tiles move toward the goal.
+
+Click <b>Next Move</b> to physically move the tile.
+
 </p>
 
 
-<div id="livePuzzle" class="live-puzzle"></div>
+<!-- ANIMATED BOARD -->
 
+<div id="board" class="board"></div>
+
+
+<!-- MOVE INFORMATION -->
 
 <div class="move-info">
 
 <div>
-Current Move:
+
+Current Move
+
 </div>
 
-<div id="direction" class="move-direction">
+<div id="direction" class="direction">
+
 START
+
 </div>
 
-<div id="movedTile">
+
+<div id="tileMessage" class="tile-message">
+
 Initial State
+
 </div>
 
-<div id="stepNumber" class="current-step">
+
+<div id="stepCount" class="step-count">
+
 Step 0 of 20
-</div>
 
 </div>
 
+</div>
 
-<button class="next-btn" onclick="nextMove()">
+
+<!-- BUTTONS -->
+
+<button
+class="next-btn"
+onclick="nextMove()">
+
 Next Move
+
 </button>
 
 
-<button class="auto-btn" onclick="autoSolve()">
+<button
+class="auto-btn"
+onclick="autoSolve()">
+
 Auto Solve
+
 </button>
 
 
-<button class="reset-btn" onclick="resetPuzzle()">
+<button
+class="reset-btn"
+onclick="resetPuzzle()">
+
 Reset
+
 </button>
 
 
-<div class="move-list">
+<!-- MOVE SEQUENCE -->
+
+<div class="move-sequence">
 
 <h3>Move Sequence</h3>
 
@@ -573,14 +673,61 @@ Reset
 
 
 
-<!-- STEP-BY-STEP EXPLANATION -->
+<!-- EXPLANATION -->
 
-<h2 style="margin-top:50px;">
-A* Step-by-Step Solution
-</h2>
+<div class="explanation">
+
+<h2>How the Tile Moves</h2>
+
+<p>
+
+The blank space is represented by <b>-</b>.
+At every step, one numbered tile adjacent to
+the blank space moves into the blank position.
+
+</p>
+
+<p>
+
+For example, the first move is <b>D</b>.
+
+The blank space is in the middle position,
+so tile <b>3</b> moves downward into the blank space.
+
+</p>
 
 
-<div id="steps" class="steps"></div>
+<pre>
+
+Before D:
+
+7  2  4
+5  -  6
+8  3  1
+
+
+After D:
+
+7  2  4
+5  3  6
+8  -  1
+
+</pre>
+
+
+<p>
+
+Therefore:
+
+</p>
+
+<p>
+
+<b>Tile 3 → DOWN ↓</b>
+
+</p>
+
+</div>
 
 
 
@@ -600,6 +747,7 @@ D → L → U → R → U → L → D → R → R → D
 
 </div>
 
+
 <div class="total">
 
 Total Number of Moves = <b>20</b>
@@ -609,35 +757,14 @@ Total Number of Moves = <b>20</b>
 </div>
 
 
-
-<!-- HEURISTIC -->
-
-<div class="formula">
-
-<h2>Heuristic Used</h2>
-
-<p>
-
-<b>Manhattan Distance</b>
-
-</p>
-
-<p>
-
-For every tile, calculate the number of horizontal
-and vertical moves required to reach its goal position.
-
-</p>
-
 </div>
 
 
-</div>
-
+<!-- FOOTER -->
 
 <footer>
 
-Artificial Intelligence | 8-Puzzle Problem | A* Search Algorithm
+Artificial Intelligence | 8-Puzzle | A* Search
 
 </footer>
 
@@ -646,56 +773,77 @@ Artificial Intelligence | 8-Puzzle Problem | A* Search Algorithm
 <script>
 
 
-/* INITIAL PUZZLE */
+/*
+==================================================
+INITIAL PUZZLE
+0 represents blank
+==================================================
+*/
 
 let puzzle = [
+
     7, 2, 4,
+
     5, 0, 6,
+
     8, 3, 1
+
 ];
 
 
-/* GOAL */
+/*
+==================================================
+OPTIMAL A* PATH
+==================================================
+*/
 
-const goal = [
-    1, 2, 3,
-    4, 5, 6,
-    7, 8, 0
-];
+const solution = [
 
-
-/* A* OPTIMAL MOVES */
-
-const moves = [
     "D", "R", "U", "L", "L",
+
     "U", "R", "R", "D", "L",
+
     "D", "L", "U", "R", "U",
+
     "L", "D", "R", "R", "D"
+
 ];
 
 
-let currentMove = 0;
+let currentStep = 0;
+
+let autoTimer = null;
 
 
-/* DISPLAY PUZZLE */
+/*
+==================================================
+CREATE BOARD
+==================================================
+*/
 
-function displayPuzzle() {
+function createBoard() {
 
-    const board = document.getElementById("livePuzzle");
+    const board =
+        document.getElementById("board");
 
     board.innerHTML = "";
 
 
-    puzzle.forEach((value, index) => {
+    puzzle.forEach(function(value, index) {
 
-        const tile = document.createElement("div");
+        const tile =
+            document.createElement("div");
 
-        tile.className = "live-tile";
+
+        tile.className =
+            "moving-tile";
 
 
         if (value === 0) {
 
-            tile.classList.add("live-blank");
+            tile.classList.add(
+                "moving-blank"
+            );
 
             tile.innerHTML = "-";
 
@@ -706,6 +854,28 @@ function displayPuzzle() {
         }
 
 
+        /*
+        Position of tile
+        */
+
+        const row =
+            Math.floor(index / 3);
+
+        const col =
+            index % 3;
+
+
+        tile.style.left =
+            (col * 100 + 2) + "px";
+
+
+        tile.style.top =
+            (row * 100 + 2) + "px";
+
+
+        tile.dataset.value = value;
+
+
         board.appendChild(tile);
 
     });
@@ -713,396 +883,39 @@ function displayPuzzle() {
 }
 
 
-/* MOVE BLANK */
+/*
+==================================================
+GET DIRECTION TEXT
+==================================================
+*/
 
-function makeMove(direction) {
+function directionText(direction) {
 
-    const blankIndex = puzzle.indexOf(0);
-
-    const row = Math.floor(blankIndex / 3);
-
-    const col = blankIndex % 3;
-
-
-    let newRow = row;
-
-    let newCol = col;
-
-
-    if (direction === "U") {
-        newRow--;
-    }
-
-    if (direction === "D") {
-        newRow++;
-    }
-
-    if (direction === "L") {
-        newCol--;
-    }
-
-    if (direction === "R") {
-        newCol++;
-    }
-
-
-    if (
-        newRow < 0 ||
-        newRow > 2 ||
-        newCol < 0 ||
-        newCol > 2
-    ) {
-
-        return null;
-
-    }
-
-
-    const newIndex = newRow * 3 + newCol;
-
-    const movedTile = puzzle[newIndex];
-
-
-    puzzle[blankIndex] = movedTile;
-
-    puzzle[newIndex] = 0;
-
-
-    return movedTile;
-
-}
-
-
-/* NEXT MOVE */
-
-function nextMove() {
-
-    if (currentMove >= moves.length) {
-
-        document.getElementById("direction").innerHTML = "GOAL";
-
-        document.getElementById("movedTile").innerHTML =
-            "Goal State Reached!";
-
-        return;
-
-    }
-
-
-    const direction = moves[currentMove];
-
-
-    const movedTile = makeMove(direction);
-
-
-    currentMove++;
-
-
-    displayPuzzle();
-
-
-    document.getElementById("direction").innerHTML =
-        direction;
-
-
-    document.getElementById("movedTile").innerHTML =
-        "Tile <b>" + movedTile +
-        "</b> moves " +
-        getDirectionText(direction) +
-        " into the blank space.";
-
-
-    document.getElementById("stepNumber").innerHTML =
-        "Step " + currentMove +
-        " of " + moves.length;
-
-
-    updateMoveList();
-
-
-    if (currentMove === moves.length) {
-
-        document.getElementById("direction").innerHTML =
-            "GOAL ✓";
-
-        document.getElementById("movedTile").innerHTML =
-            "Goal State Reached Successfully!";
-
-    }
-
-}
-
-
-/* DIRECTION TEXT */
-
-function getDirectionText(direction) {
-
-    if (direction === "U") {
+    if (direction === "U")
         return "UP ↑";
-    }
 
-    if (direction === "D") {
+    if (direction === "D")
         return "DOWN ↓";
-    }
 
-    if (direction === "L") {
+    if (direction === "L")
         return "LEFT ←";
-    }
 
-    if (direction === "R") {
+    if (direction === "R")
         return "RIGHT →";
-    }
 
 }
 
 
-/* MOVE LIST */
-
-function updateMoveList() {
-
-    const list = document.getElementById("moveList");
-
-    list.innerHTML = "";
-
-
-    moves.forEach((move, index) => {
-
-        const span = document.createElement("span");
-
-        span.innerHTML =
-            (index + 1) + ". " + move;
-
-
-        if (index < currentMove) {
-
-            span.classList.add("done");
-
-        }
-
-
-        list.appendChild(span);
-
-    });
-
-}
-
-
-/* RESET */
-
-function resetPuzzle() {
-
-    puzzle = [
-        7, 2, 4,
-        5, 0, 6,
-        8, 3, 1
-    ];
-
-    currentMove = 0;
-
-
-    displayPuzzle();
-
-
-    document.getElementById("direction").innerHTML =
-        "START";
-
-
-    document.getElementById("movedTile").innerHTML =
-        "Initial State";
-
-
-    document.getElementById("stepNumber").innerHTML =
-        "Step 0 of 20";
-
-
-    updateMoveList();
-
-}
-
-
-/* AUTO SOLVE */
-
-let timer = null;
-
-function autoSolve() {
-
-    if (currentMove >= moves.length) {
-
-        resetPuzzle();
-
-    }
-
-
-    clearInterval(timer);
-
-
-    timer = setInterval(function() {
-
-        if (currentMove >= moves.length) {
-
-            clearInterval(timer);
-
-            return;
-
-        }
-
-
-        nextMove();
-
-    }, 700);
-
-}
-
-
-/* CREATE STEP TABLE */
-
-function calculateManhattan(state) {
-
-    let distance = 0;
-
-
-    for (let i = 0; i < 9; i++) {
-
-        let value = state[i];
-
-
-        if (value === 0) {
-            continue;
-        }
-
-
-        let currentRow =
-            Math.floor(i / 3);
-
-        let currentCol =
-            i % 3;
-
-
-        let goalIndex =
-            goal.indexOf(value);
-
-
-        let goalRow =
-            Math.floor(goalIndex / 3);
-
-        let goalCol =
-            goalIndex % 3;
-
-
-        distance +=
-            Math.abs(currentRow - goalRow) +
-            Math.abs(currentCol - goalCol);
-
-    }
-
-
-    return distance;
-
-}
-
-
-/* GENERATE STATES */
-
-function generateSteps() {
-
-    let state = [
-        7, 2, 4,
-        5, 0, 6,
-        8, 3, 1
-    ];
-
-
-    const stepsContainer =
-        document.getElementById("steps");
-
-
-    stepsContainer.innerHTML = "";
-
-
-    moves.forEach(function(move, index) {
-
-        makeMoveForState(state, move);
-
-
-        let g = index + 1;
-
-        let h = calculateManhattan(state);
-
-        let f = g + h;
-
-
-        const card =
-            document.createElement("div");
-
-        card.className = "step";
-
-
-        let puzzleHTML =
-            '<div class="small-puzzle">';
-
-
-        state.forEach(function(value) {
-
-            if (value === 0) {
-
-                puzzleHTML +=
-                    '<div class="small-tile small-blank">-</div>';
-
-            } else {
-
-                puzzleHTML +=
-                    '<div class="small-tile">' +
-                    value +
-                    '</div>';
-
-            }
-
-        });
-
-
-        puzzleHTML += "</div>";
-
-
-        card.innerHTML = `
-
-            <h3>
-                Step ${g} – Move ${move}
-            </h3>
-
-            <div class="step-grid">
-
-                ${puzzleHTML}
-
-                <div class="details">
-
-                    g = ${g}<br>
-
-                    h = ${h}<br>
-
-                    <strong>
-                    f = ${g} + ${h} = ${f}
-                    </strong>
-
-                </div>
-
-            </div>
-
-        `;
-
-
-        stepsContainer.appendChild(card);
-
-    });
-
-}
-
-
-/* MOVE STATE FOR STEP TABLE */
-
-function makeMoveForState(state, direction) {
+/*
+==================================================
+MOVE TILE
+==================================================
+*/
+
+function moveTile(direction) {
 
     const blankIndex =
-        state.indexOf(0);
+        puzzle.indexOf(0);
 
 
     const row =
@@ -1117,51 +930,520 @@ function makeMoveForState(state, direction) {
     let newCol = col;
 
 
+    /*
+    Find tile that moves
+    */
+
     if (direction === "U") {
+
         newRow--;
+
     }
 
     if (direction === "D") {
+
         newRow++;
+
     }
 
     if (direction === "L") {
+
         newCol--;
+
     }
 
     if (direction === "R") {
+
         newCol++;
+
     }
 
 
-    const newIndex =
+    /*
+    Make sure movement is valid
+    */
+
+    if (
+
+        newRow < 0 ||
+
+        newRow > 2 ||
+
+        newCol < 0 ||
+
+        newCol > 2
+
+    ) {
+
+        return null;
+
+    }
+
+
+    const movingIndex =
         newRow * 3 + newCol;
 
 
-    const temp =
-        state[blankIndex];
+    const movingTile =
+        puzzle[movingIndex];
 
 
-    state[blankIndex] =
-        state[newIndex];
+    /*
+    Swap tile with blank
+    */
 
-    state[newIndex] =
-        temp;
+    puzzle[blankIndex] =
+        movingTile;
+
+    puzzle[movingIndex] =
+        0;
+
+
+    return {
+
+        tile: movingTile,
+
+        oldIndex: movingIndex,
+
+        newIndex: blankIndex
+
+    };
 
 }
 
 
-/* START PAGE */
+/*
+==================================================
+ANIMATE ONE TILE
+==================================================
+*/
 
-displayPuzzle();
+function animateMove(direction) {
+
+    const blankIndex =
+        puzzle.indexOf(0);
+
+
+    const row =
+        Math.floor(blankIndex / 3);
+
+    const col =
+        blankIndex % 3;
+
+
+    let newRow = row;
+
+    let newCol = col;
+
+
+    if (direction === "U")
+        newRow--;
+
+    if (direction === "D")
+        newRow++;
+
+    if (direction === "L")
+        newCol--;
+
+    if (direction === "R")
+        newCol++;
+
+
+    const movingIndex =
+        newRow * 3 + newCol;
+
+
+    /*
+    Before changing puzzle,
+    identify the tile.
+    */
+
+    const movingValue =
+        puzzle[movingIndex];
+
+
+    const board =
+        document.getElementById("board");
+
+
+    const tiles =
+        board.querySelectorAll(
+            ".moving-tile"
+        );
+
+
+    /*
+    Find the moving tile
+    */
+
+    tiles.forEach(function(tile) {
+
+        if (
+
+            Number(tile.dataset.value)
+            === movingValue
+
+        ) {
+
+            /*
+            Highlight moving tile
+            */
+
+            tile.classList.add(
+                "highlight"
+            );
+
+
+            /*
+            Move tile into blank position
+            */
+
+            tile.style.left =
+                (col * 100 + 2) + "px";
+
+
+            tile.style.top =
+                (row * 100 + 2) + "px";
+
+        }
+
+
+    });
+
+
+    /*
+    After animation completes,
+    update actual puzzle.
+    */
+
+    setTimeout(function() {
+
+        moveTile(direction);
+
+        createBoard();
+
+    }, 550);
+
+}
+
+
+/*
+==================================================
+NEXT MOVE
+==================================================
+*/
+
+function nextMove() {
+
+    if (currentStep >= solution.length) {
+
+        document.getElementById(
+            "direction"
+        ).innerHTML = "GOAL ✓";
+
+
+        document.getElementById(
+            "tileMessage"
+        ).innerHTML =
+            "Goal State Reached Successfully!";
+
+
+        return;
+
+    }
+
+
+    const direction =
+        solution[currentStep];
+
+
+    /*
+    Determine tile before movement
+    */
+
+    const blankIndex =
+        puzzle.indexOf(0);
+
+
+    const row =
+        Math.floor(blankIndex / 3);
+
+    const col =
+        blankIndex % 3;
+
+
+    let newRow = row;
+
+    let newCol = col;
+
+
+    if (direction === "U")
+        newRow--;
+
+    if (direction === "D")
+        newRow++;
+
+    if (direction === "L")
+        newCol--;
+
+    if (direction === "R")
+        newCol++;
+
+
+    const movingIndex =
+        newRow * 3 + newCol;
+
+
+    const movingTile =
+        puzzle[movingIndex];
+
+
+    /*
+    Display information
+    */
+
+    document.getElementById(
+        "direction"
+    ).innerHTML =
+        directionText(direction);
+
+
+    document.getElementById(
+        "tileMessage"
+    ).innerHTML =
+
+        "Tile <b>" +
+
+        movingTile +
+
+        "</b> moves " +
+
+        directionText(direction) +
+
+        " into the blank space";
+
+
+    currentStep++;
+
+
+    document.getElementById(
+        "stepCount"
+    ).innerHTML =
+
+        "Step " +
+
+        currentStep +
+
+        " of " +
+
+        solution.length;
+
+
+    /*
+    Animate movement
+    */
+
+    animateMove(direction);
+
+
+    updateMoveList();
+
+
+    if (currentStep === solution.length) {
+
+        setTimeout(function() {
+
+            document.getElementById(
+                "direction"
+            ).innerHTML =
+                "GOAL ✓";
+
+
+            document.getElementById(
+                "tileMessage"
+            ).innerHTML =
+                "Goal State Reached!";
+
+        }, 650);
+
+    }
+
+}
+
+
+/*
+==================================================
+MOVE LIST
+==================================================
+*/
+
+function updateMoveList() {
+
+    const list =
+        document.getElementById(
+            "moveList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    solution.forEach(
+        function(move, index) {
+
+            const box =
+                document.createElement(
+                    "span"
+                );
+
+
+            box.className =
+                "move-box";
+
+
+            box.innerHTML =
+
+                (index + 1) +
+
+                ". " +
+
+                move;
+
+
+            if (index < currentStep) {
+
+                box.classList.add(
+                    "completed"
+                );
+
+            }
+
+
+            if (index === currentStep - 1) {
+
+                box.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            list.appendChild(box);
+
+        }
+    );
+
+}
+
+
+/*
+==================================================
+RESET
+==================================================
+*/
+
+function resetPuzzle() {
+
+    clearInterval(autoTimer);
+
+
+    puzzle = [
+
+        7, 2, 4,
+
+        5, 0, 6,
+
+        8, 3, 1
+
+    ];
+
+
+    currentStep = 0;
+
+
+    createBoard();
+
+
+    document.getElementById(
+        "direction"
+    ).innerHTML = "START";
+
+
+    document.getElementById(
+        "tileMessage"
+    ).innerHTML =
+        "Initial State";
+
+
+    document.getElementById(
+        "stepCount"
+    ).innerHTML =
+        "Step 0 of 20";
+
+
+    updateMoveList();
+
+}
+
+
+/*
+==================================================
+AUTO SOLVE
+==================================================
+*/
+
+function autoSolve() {
+
+    clearInterval(autoTimer);
+
+
+    if (currentStep >= solution.length) {
+
+        resetPuzzle();
+
+    }
+
+
+    autoTimer = setInterval(
+
+        function() {
+
+            if (
+                currentStep >=
+                solution.length
+            ) {
+
+                clearInterval(autoTimer);
+
+                return;
+
+            }
+
+
+            nextMove();
+
+        },
+
+        900
+
+    );
+
+}
+
+
+/*
+==================================================
+START
+==================================================
+*/
+
+createBoard();
 
 updateMoveList();
-
-generateSteps();
-
 
 </script>
 
 
 </body>
+
 </html>
